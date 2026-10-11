@@ -1,91 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Student Portal</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Student Portal</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h2 id="main-heading">Student Information Portal</h2>
-        
-        <div class="controls-bar">
-            <button class="btn-action" onclick="toggleTable()">Toggle Table</button>
-            <button class="btn-action" onclick="changeHeading()">Change Heading</button>
-            <button class="btn-action" onclick="setTheme('light')">Light Mode</button>
-            <button class="btn-action" onclick="setTheme('dark')">Dark Mode</button>
-        </div>
+<div class="container">
+  <h2 id="main-heading">Student Information Portal</h2>
 
-        <div id="top-student"></div>
+  <div class="controls-bar">
+    <button class="btn-action" onclick="toggleTable()">Toggle Table</button>
+    <button class="btn-action" onclick="changeHeading()">Change Heading</button>
+    <button class="btn-action" id="theme-btn">Dark Mode</button>
+    <button class="btn-action" id="logout-btn">Logout</button>
+  </div>
 
-        <table id="student-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Course</th>
-                    <th>Semester</th>
-                    <th>Marks</th>
-                </tr>
-            </thead>
-            <tbody id="student-body"></tbody>
-        </table>
-    </div>
+  <div id="top-student"></div>
+  <div id="stats"></div>
 
-    <script>
-        // Load XML and build table dynamically on page load
-        window.onload = function() {
-            fetch('students.xml')
-                .then(res => res.text())
-                .then(xmlStr => {
-                    const xmlDoc = new DOMParser().parseFromString(xmlStr, 'text/xml');
-                    const students = xmlDoc.getElementsByTagName('student');
-                    const tbody = document.getElementById('student-body');
+  <input type="text" id="search" class="search-box" placeholder="Search by name...">
 
-                    let maxMarks = -1;
-                    let topStudentName = '';
+  <table id="student-table">
+    <thead>
+      <tr>
+        <th data-key="name">Name</th>
+        <th data-key="course">Course</th>
+        <th data-key="semester">Semester</th>
+        <th data-key="marks">Marks</th>
+      </tr>
+    </thead>
+    <tbody id="student-body"></tbody>
+  </table>
+</div>
 
-                    for (let i = 0; i < students.length; i++) {
-                        const name = students[i].getElementsByTagName('name')[0].textContent;
-                        const course = students[i].getElementsByTagName('course')[0].textContent;
-                        const semester = students[i].getElementsByTagName('semester')[0].textContent;
-                        const marks = parseInt(students[i].getElementsByTagName('marks')[0].textContent);
+<script>
+// ---------- Login guard: send back to login if not signed in ----------
+if (sessionStorage.getItem('loggedIn') !== 'true') {
+  window.location.href = 'login.html';
+}
 
-                        // Dynamic DOM Table Row Creation
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `<td>${name}</td><td>${course}</td><td>${semester}</td><td>${marks}</td>`;
-                        tbody.appendChild(tr);
+// ---------- Data ----------
+let students = [];
+let topStudent = null;
+let sortKey = null;
+let sortAsc = true;
 
-                        // Determine top student
-                        if (marks > maxMarks) {
-                            maxMarks = marks;
-                            topStudentName = name;
-                        }
-                    }
+window.onload = function () {
+  fetch('students.xml')
+    .then(res => res.text())
+    .then(xmlStr => {
+      const xmlDoc = new DOMParser().parseFromString(xmlStr, 'text/xml');
+      const nodes = xmlDoc.getElementsByTagName('student');
 
-                    document.getElementById('top-student').innerHTML = 
-                        `Top Student: ${topStudentName} (${maxMarks} Marks)`;
-                });
-        };
+      for (let i = 0; i < nodes.length; i++) {
+        students.push({
+          name: nodes[i].getElementsByTagName('name')[0].textContent,
+          course: nodes[i].getElementsByTagName('course')[0].textContent,
+          semester: nodes[i].getElementsByTagName('semester')[0].textContent,
+          marks: parseInt(nodes[i].getElementsByTagName('marks')[0].textContent)
+        });
+      }
 
-        // Feature: Show/Hide Table
-        function toggleTable() {
-            const table = document.getElementById('student-table');
-            table.style.display = (table.style.display === 'none') ? 'table' : 'none';
-        }
+      showTopAndStats();
+      renderTable();
+    })
+    .catch(() => {
+      document.getElementById('top-student').textContent = 'Could not load student data.';
+    });
+};
 
-        // Feature: Change Heading
-        function changeHeading() {
-            document.getElementById('main-heading').innerHTML = 'Updated Student Portal View';
-        }
+// ---------- Top student + stats line ----------
+function showTopAndStats() {
+  if (students.length === 0) {
+    document.getElementById('top-student').textContent = 'No student data found.';
+    return;
+  }
 
-        // Feature: Light / Dark Mode using classList
-        function setTheme(mode) {
-            if (mode === 'dark') {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-            }
-        }
-    </script>
+  let total = 0;
+  topStudent = students[0];
+  students.forEach(s => {
+    total += s.marks;
+    if (s.marks > topStudent.marks) topStudent = s;
+  });
+
+  const average = (total / students.length).toFixed(1);
+  document.getElementById('top-student').textContent =
+    `Top Student: ${topStudent.name} (${topStudent.marks} Marks)`;
+  document.getElementById('stats').textContent =
+    `Total Students: ${students.length}  |  Average Marks: ${average}`;
+}
+
+// ---------- Marks color class ----------
+function marksClass(marks) {
+  if (marks >= 75) return 'marks-high';
+  if (marks >= 40) return 'marks-mid';
+  return 'marks-low';
+}
+
+// ---------- Build the table (applies search + sort) ----------
+function renderTable() {
+  const tbody = document.getElementById('student-body');
+  tbody.innerHTML = '';
+
+  const query = document.getElementById('search').value.toLowerCase();
+  const list = students.filter(s => s.name.toLowerCase().includes(query));
+
+  if (sortKey) {
+    list.sort((a, b) => {
+      let result;
+      if (sortKey === 'marks') {
+        result = a.marks - b.marks;
+      } else {
+        result = a[sortKey].localeCompare(b[sortKey], undefined, { numeric: true });
+      }
+      return sortAsc ? result : -result;
+    });
+  }
+
+  list.forEach(s => {
+    const tr = document.createElement('tr');
+    if (s === topStudent) tr.classList.add('top-row');
+
+    [s.name, s.course, s.semester].forEach(text => {
+      const td = document.createElement('td');
+      td.textContent = text;
+      tr.appendChild(td);
+    });
+
+    const marksTd = document.createElement('td');
+    marksTd.textContent = s.marks;
+    marksTd.classList.add(marksClass(s.marks));
+    tr.appendChild(marksTd);
+
+    tbody.appendChild(tr);
+  });
+}
+
+// ---------- Search ----------
+document.getElementById('search').addEventListener('input', renderTable);
+
+// ---------- Click a header to sort ----------
+document.querySelectorAll('#student-table th').forEach(th => {
+  th.addEventListener('click', function () {
+    const key = th.dataset.key;
+    if (sortKey === key) {
+      sortAsc = !sortAsc;
+    } else {
+      sortKey = key;
+      sortAsc = true;
+    }
+    document.querySelectorAll('#student-table th').forEach(h => h.classList.remove('asc', 'desc'));
+    th.classList.add(sortAsc ? 'asc' : 'desc');
+    renderTable();
+  });
+});
+
+// ---------- Show / hide table ----------
+function toggleTable() {
+  const table = document.getElementById('student-table');
+  table.style.display = (table.style.display === 'none') ? 'table' : 'none';
+}
+
+// ---------- Change heading ----------
+function changeHeading() {
+  document.getElementById('main-heading').textContent = 'Updated Student Portal View';
+}
+
+// ---------- Single theme toggle (remembers choice) ----------
+const themeBtn = document.getElementById('theme-btn');
+
+function applyTheme(isDark) {
+  document.body.classList.toggle('dark-mode', isDark);
+  themeBtn.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+}
+
+applyTheme(localStorage.getItem('theme') === 'dark');
+
+themeBtn.addEventListener('click', function () {
+  const isDark = !document.body.classList.contains('dark-mode');
+  applyTheme(isDark);
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+});
+
+// ---------- Logout ----------
+document.getElementById('logout-btn').addEventListener('click', function () {
+  sessionStorage.removeItem('loggedIn');
+  window.location.href = 'login.html';
+});
+</script>
 </body>
 </html>

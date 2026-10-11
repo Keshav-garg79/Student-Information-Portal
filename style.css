@@ -287,3 +287,74 @@ body.dark-mode .btn-action:hover {
 body.dark-mode table {
     background: rgba(15, 23, 42, 0.3);
 }
+/* ==========================================
+   6. NEW FEATURES (search, sort, stats, top row)
+   ========================================== */
+
+/* Empty boxes stay hidden until data loads */
+#top-student:empty,
+#stats:empty {
+    display: none;
+}
+
+/* Stats line under the top student card */
+#stats {
+    margin-bottom: 1.25rem;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Search box (inherits your text input styling) */
+.search-box {
+    margin-top: 0.5rem;
+}
+
+/* Clickable, sortable column headers */
+th {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+th:hover {
+    color: var(--text-primary);
+}
+
+th.asc::after  { content: ' ▲'; }
+th.desc::after { content: ' ▼'; }
+
+/* Top student's row highlighted in the table */
+tr.top-row td {
+    background: var(--top-bg);
+    color: var(--top-text);
+    font-weight: 700;
+}
+
+/* Marks colors */
+.marks-high { color: #15803d; font-weight: 700; }
+.marks-mid  { color: #b45309; font-weight: 700; }
+.marks-low  { color: #b91c1c; font-weight: 700; }
+
+body.dark-mode .marks-high { color: #4ade80; }
+body.dark-mode .marks-mid  { color: #fbbf24; }
+body.dark-mode .marks-low  { color: #f87171; }
+
+/* Top row keeps its own text color instead of the marks color */
+tr.top-row td.marks-high,
+tr.top-row td.marks-mid,
+tr.top-row td.marks-low {
+    color: var(--top-text);
+}
+
+/* Show-password checkbox on the login page */
+.show-pass {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
