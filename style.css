@@ -1,0 +1,289 @@
+/* ==========================================
+   1. VARIABLES & SYSTEM SETUP
+   ========================================== */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    /* Color Palette - Light Mode */
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 35%, #311042 100%);
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(255, 255, 255, 0.6);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    
+    /* Interactive Colors */
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    --primary-shadow: rgba(79, 70, 229, 0.35);
+    --primary-hover: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    
+    /* Highlight Cards */
+    --top-bg: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    --top-border: #a7f3d0;
+    --top-text: #065f46;
+    
+    /* Table Variables */
+    --table-header-bg: #f8fafc;
+    --table-row-hover: #f1f5f9;
+    --border-color: #e2e8f0;
+    
+    --shadow-main: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --glass-blur: blur(16px);
+}
+
+/* ==========================================
+   2. GLOBAL & LAYOUT RESET
+   ========================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glassmorphism Container */
+.container {
+    width: 100%;
+    max-width: 850px;
+    background: var(--card-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-main);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.75rem;
+    text-align: center;
+}
+
+/* ==========================================
+   3. LOGIN PAGE SPECIFIC DESIGN
+   ========================================== */
+.login-container {
+    max-width: 440px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+input[type="text"], 
+input[type="password"] {
+    width: 100%;
+    padding: 0.9rem 1.2rem;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    outline: none;
+    transition: all 0.25s ease;
+}
+
+input[type="text"]:focus, 
+input[type="password"]:focus {
+    background: #ffffff;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 0.95rem;
+    background: var(--primary-gradient);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 10px 20px -5px var(--primary-shadow);
+    transition: all 0.25s ease;
+}
+
+.btn-login:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px -5px var(--primary-shadow);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+#msg {
+    margin-top: 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 8px;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+/* ==========================================
+   4. PORTAL CONTROLS & TABLE
+   ========================================== */
+.controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 1.75rem;
+}
+
+.btn-action {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--text-secondary);
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+}
+
+.btn-action:hover {
+    background: #ffffff;
+    color: var(--text-primary);
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+#top-student {
+    margin: 1.5rem 0;
+    padding: 1rem 1.5rem;
+    background: var(--top-bg);
+    border: 1px solid var(--top-border);
+    border-radius: 14px;
+    color: var(--top-text);
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);
+}
+
+/* Styled Table */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+th, td {
+    padding: 1rem 1.25rem;
+    text-align: center;
+}
+
+th {
+    background: var(--table-header-bg);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border-color);
+}
+
+td {
+    font-size: 0.925rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    transition: background 0.2s ease;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: var(--table-row-hover);
+}
+
+/* ==========================================
+   5. DARK MODE OVERRIDES
+   ========================================== */
+body.dark-mode {
+    --card-bg: rgba(15, 23, 42, 0.85);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+    
+    --table-header-bg: rgba(30, 41, 59, 0.8);
+    --table-row-hover: rgba(51, 65, 85, 0.5);
+    
+    --top-bg: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+    --top-border: #047857;
+    --top-text: #6ee7b7;
+    
+    --shadow-main: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode h2 {
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.dark-mode input[type="text"], 
+body.dark-mode input[type="password"] {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+body.dark-mode input[type="text"]:focus, 
+body.dark-mode input[type="password"]:focus {
+    background: #0f172a;
+}
+
+body.dark-mode .btn-action {
+    background: rgba(30, 41, 59, 0.6);
+}
+
+body.dark-mode .btn-action:hover {
+    background: #1e293b;
+    border-color: #475569;
+}
+
+body.dark-mode table {
+    background: rgba(15, 23, 42, 0.3);
+}

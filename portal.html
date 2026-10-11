@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2 id="main-heading">Student Information Portal</h2>
+        
+        <div class="controls-bar">
+            <button class="btn-action" onclick="toggleTable()">Toggle Table</button>
+            <button class="btn-action" onclick="changeHeading()">Change Heading</button>
+            <button class="btn-action" onclick="setTheme('light')">Light Mode</button>
+            <button class="btn-action" onclick="setTheme('dark')">Dark Mode</button>
+        </div>
+
+        <div id="top-student"></div>
+
+        <table id="student-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Semester</th>
+                    <th>Marks</th>
+                </tr>
+            </thead>
+            <tbody id="student-body"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Load XML and build table dynamically on page load
+        window.onload = function() {
+            fetch('students.xml')
+                .then(res => res.text())
+                .then(xmlStr => {
+                    const xmlDoc = new DOMParser().parseFromString(xmlStr, 'text/xml');
+                    const students = xmlDoc.getElementsByTagName('student');
+                    const tbody = document.getElementById('student-body');
+
+                    let maxMarks = -1;
+                    let topStudentName = '';
+
+                    for (let i = 0; i < students.length; i++) {
+                        const name = students[i].getElementsByTagName('name')[0].textContent;
+                        const course = students[i].getElementsByTagName('course')[0].textContent;
+                        const semester = students[i].getElementsByTagName('semester')[0].textContent;
+                        const marks = parseInt(students[i].getElementsByTagName('marks')[0].textContent);
+
+                        // Dynamic DOM Table Row Creation
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${name}</td><td>${course}</td><td>${semester}</td><td>${marks}</td>`;
+                        tbody.appendChild(tr);
+
+                        // Determine top student
+                        if (marks > maxMarks) {
+                            maxMarks = marks;
+                            topStudentName = name;
+                        }
+                    }
+
+                    document.getElementById('top-student').innerHTML = 
+                        `Top Student: ${topStudentName} (${maxMarks} Marks)`;
+                });
+        };
+
+        // Feature: Show/Hide Table
+        function toggleTable() {
+            const table = document.getElementById('student-table');
+            table.style.display = (table.style.display === 'none') ? 'table' : 'none';
+        }
+
+        // Feature: Change Heading
+        function changeHeading() {
+            document.getElementById('main-heading').innerHTML = 'Updated Student Portal View';
+        }
+
+        // Feature: Light / Dark Mode using classList
+        function setTheme(mode) {
+            if (mode === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+    </script>
+</body>
+</html>

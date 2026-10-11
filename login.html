@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container login-container">
+        <h2>Welcome Back</h2>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button class="btn-login" onclick="login()">Sign In</button>
+        <div id="msg"></div>
+    </div>
+
+    <script>
+        function login() {
+            const userIn = document.getElementById('username').value;
+            const passIn = document.getElementById('password').value;
+            const msgArea = document.getElementById('msg');
+
+            fetch('users.xml')
+                .then(res => res.text())
+                .then(xmlStr => {
+                    const xmlDoc = new DOMParser().parseFromString(xmlStr, 'text/xml');
+                    const users = xmlDoc.getElementsByTagName('user');
+                    let isValid = false;
+
+                    for (let i = 0; i < users.length; i++) {
+                        const u = users[i].getElementsByTagName('username')[0].textContent;
+                        const p = users[i].getElementsByTagName('password')[0].textContent;
+                        if (u === userIn && p === passIn) {
+                            isValid = true;
+                            break;
+                        }
+                    }
+
+                    if (isValid) {
+                        msgArea.style.color = 'green';
+                        msgArea.innerHTML = 'Login successful! Redirecting...';
+                        setTimeout(() => window.location.href = 'portal.html', 1000);
+                    } else {
+                        msgArea.style.color = 'red';
+                        msgArea.innerHTML = 'Invalid username or password!';
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
