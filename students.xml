@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <students>
     <student>
-        <name>Alice Johnson</name>
+        <name>Kushagra Sharma</name>
         <course>Computer Science</course>
         <semester>4</semester>
         <marks>88</marks>
     </student>
     <student>
-        <name>Bob Smith</name>
+        <name>Keshav Garg</name>
         <course>Information Technology</course>
         <semester>6</semester>
         <marks>95</marks>
     </student>
     <student>
-        <name>Charlie Brown</name>
+        <name>Mayank Bansal</name>
         <course>Data Science</course>
         <semester>2</semester>
         <marks>76</marks>
     </student>
     <student>
-        <name>Diana Prince</name>
+        <name>Ojas Bhargava</name>
         <course>Software Engineering</course>
         <semester>8</semester>
         <marks>92</marks>
     </student>
     <student>
-        <name>Evan Wright</name>
+        <name>Priyansh Mittal</name>
         <course>Computer Science</course>
         <semester>3</semester>
         <marks>64</marks>
     </student>
     <student>
-        <name>Fiona Gallagher</name>
+        <name>Krish Verma</name>
         <course>Cybersecurity</course>
         <semester>5</semester>
         <marks>81</marks>
