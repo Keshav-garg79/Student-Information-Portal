@@ -1,1 +1,0 @@
-This is a testing file, this has no relation with the Student Information website. You can ignore or delete this file.
